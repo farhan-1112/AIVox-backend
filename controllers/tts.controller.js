@@ -37,8 +37,9 @@ const textToSpeech = async (req, res) => {
       },
       {
         headers: {
-          'xi-api-key': process.env.ELEVENLABS_API_KEY,
+          'xi-api-key': process.env.ELEVENLABS_API_KEY.trim(),
           'Content-Type': 'application/json',
+          'Accept': 'audio/mpeg'
         },
         responseType: 'arraybuffer',
       }
