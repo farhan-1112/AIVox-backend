@@ -40,14 +40,23 @@ const textToSpeech = async (req, res) => {
 
     res.set({
       'Content-Type': 'audio/mpeg',
-      'Content-Length': response.data.length,
+      'Content-Length': response.data.byteLength || response.data.length,
     });
 
     res.send(Buffer.from(response.data));
   } catch (error) {
-    res.status(500).json({
+    console.error('TTS Error:', error.response ? Buffer.from(error.response.data).toString() : error.message);
+    
+    const errorMessage = error.response 
+      ? `ElevenLabs Error: ${Buffer.from(error.response.data).toString()}` 
+      : error.message;
+
+    res.status(error.response?.status || 500).json({
       success: false,
-      error: { code: 'SERVER_ERROR', message: error.message },
+      error: { 
+        code: 'TTS_ERROR', 
+        message: errorMessage
+      },
     });
   }
 };
